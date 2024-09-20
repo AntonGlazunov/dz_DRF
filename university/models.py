@@ -20,7 +20,7 @@ class Lesson(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название')
     description = models.TextField(verbose_name='описание')
     preview = models.ImageField(upload_to='university/', verbose_name='Превью', **NULLABLE)
-    video_URL = models.URLField(max_length=100, verbose_name='Ссылка на видео')
+    video_URL = models.URLField(max_length=100, verbose_name='Ссылка на видео', **NULLABLE)
     course = models.ManyToManyField(Course, verbose_name='Курс')
 
     def __str__(self):

@@ -3,11 +3,12 @@ from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 
 from users.models import User, Pay
-from users.serializers import UserSerializer, PaySerializer
+from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
+
 
 
 class UserListAPIView(generics.ListAPIView):

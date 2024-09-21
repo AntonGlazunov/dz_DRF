@@ -1,11 +1,8 @@
-from datetime import date
-
 from django.core.management import BaseCommand
 
 from university.models import Lesson, Course
-from users.models import User
-
 from users.models import Pay
+from users.models import User
 
 
 class Command(BaseCommand):
@@ -62,4 +59,3 @@ class Command(BaseCommand):
             payment_method='card'
         )
         pay.save()
-

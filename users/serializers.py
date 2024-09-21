@@ -17,8 +17,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['email', 'avatar', 'phone', 'country', 'pk', 'pay_user']
 
 
-class PaySerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'password']
 
+
+class PaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Pay
         fields = ['user', 'date_pay', 'paid_course', 'paid_lesson', 'sum_paid', 'payment_method']

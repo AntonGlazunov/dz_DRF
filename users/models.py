@@ -15,6 +15,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
 
+
 class Pay(models.Model):
     PAYMENT_METHOD_CHOICES = {
         ('cash', 'Наличные'),

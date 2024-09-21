@@ -22,6 +22,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'password']
 
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        user.set_password(validated_data.get('password'))
+        return user
+
 
 class PaySerializer(serializers.ModelSerializer):
     class Meta:

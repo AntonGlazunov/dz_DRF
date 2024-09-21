@@ -1,7 +1,7 @@
 from rest_framework import generics
 
-from users.models import User
-from users.serializers import UserSerializer
+from users.models import User, Pay
+from users.serializers import UserSerializer, PaySerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -25,3 +25,13 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
 class UserDestroyAPIView(generics.DestroyAPIView):
     queryset = User.objects.all()
+
+
+class PayListAPIView(generics.ListAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()
+
+
+class PayRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()

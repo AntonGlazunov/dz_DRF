@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_filters',
+
     'users',
     'university',
 ]
@@ -164,3 +166,4 @@ if CACHE_ENABLE:
             "LOCATION": os.getenv('CACHES_LOCATION'),
         }
     }
+

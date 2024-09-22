@@ -1,4 +1,3 @@
-from django.contrib.auth.forms import UserCreationForm
 from rest_framework import serializers
 
 from users.models import User, Pay
@@ -16,6 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'avatar', 'phone', 'country', 'pk', 'pay_user']
+
+
+class UserAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'date_joined']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

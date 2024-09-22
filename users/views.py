@@ -4,7 +4,8 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import User, Pay
-from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer
+from users.permissions import IsOwner
+from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer, UserAllSerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -18,7 +19,7 @@ class UserCreateAPIView(generics.CreateAPIView):
 
 
 class UserListAPIView(generics.ListAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserAllSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
@@ -28,16 +29,24 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
+    def get_serializer(self, *args, **kwargs):
+        if self.request.user.pk == self.get_object().pk:
+            return super().get_serializer(*args, **kwargs)
+        else:
+            serializer_class = UserAllSerializer
+            kwargs.setdefault('context', self.get_serializer_context())
+            return serializer_class(*args, **kwargs)
+
 
 class UserUpdateAPIView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
 
 class UserDestroyAPIView(generics.DestroyAPIView):
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
 
 class PayListAPIView(generics.ListAPIView):
@@ -46,10 +55,10 @@ class PayListAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['date_pay']
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
 
 class PayRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = PaySerializer
     queryset = Pay.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]

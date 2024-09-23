@@ -2,6 +2,7 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from university.models import Course, Lesson
+from university.paginators import UniversityPaginator
 from university.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsOwner, IsModer, IsAuthenticatedAndNoModer
 
@@ -9,6 +10,7 @@ from users.permissions import IsOwner, IsModer, IsAuthenticatedAndNoModer
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = UniversityPaginator
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -44,6 +46,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = UniversityPaginator
 
     def get_queryset(self):
         if self.request.user.groups.filter(name='Moder').exists():

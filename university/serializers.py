@@ -24,7 +24,6 @@ class CourseSerializer(serializers.ModelSerializer):
         return len(instance.lesson_set.all())
 
     def get_sub(self, instance):
-        print(instance)
-        user = instance.owner
+        user = self.context['request'].user
         subs_item = instance.sub_course.filter(user=user)
         return subs_item.exists()

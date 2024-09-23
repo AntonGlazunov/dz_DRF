@@ -11,15 +11,20 @@ class LessonSerializer(serializers.ModelSerializer):
         validators = [VideoURLValidator(field='video_URL')]
 
 
-
 class CourseSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer(source='lesson_set', many=True, read_only=True)
     count_lesson = serializers.SerializerMethodField()
+    sub = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ['title', 'preview', 'description', 'lesson', 'count_lesson']
+        fields = ['title', 'preview', 'description', 'lesson', 'count_lesson', 'sub']
 
     def get_count_lesson(self, instance):
         return len(instance.lesson_set.all())
 
+    def get_sub(self, instance):
+        print(instance)
+        user = instance.owner
+        subs_item = instance.sub_course.filter(user=user)
+        return subs_item.exists()

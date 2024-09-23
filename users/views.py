@@ -1,11 +1,15 @@
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from users.models import User, Pay
+from university.models import Course
+from users.models import User, Pay, Subscription
 from users.permissions import IsOwner
-from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer, UserAllSerializer
+from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer, UserAllSerializer, \
+    SubscriptionSerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -62,3 +66,24 @@ class PayRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = PaySerializer
     queryset = Pay.objects.all()
     permission_classes = [IsOwner]
+
+
+class SubCreateOrDeliteAPIView(generics.CreateAPIView):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsOwner]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data['course']
+        course_item = get_object_or_404(Course, pk=course_id)
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+        if subs_item.exists():
+            subs_item[0].delete()
+            message = 'подписка удалена'
+        else:
+            subs_item = Subscription(user=user, course=course_item)
+            subs_item.save()
+            message = 'подписка добавлена'
+
+        return Response({"message": message})

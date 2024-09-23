@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -17,7 +16,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f'{self.email}, {self.is_active}'
-
 
 
 class Pay(models.Model):
@@ -42,3 +40,10 @@ class Pay(models.Model):
     class Meta:
         verbose_name = 'Платеж'
         verbose_name_plural = 'Платежи'
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey('users.User', verbose_name='Пользователь',
+                             on_delete=models.CASCADE, related_name='sub_user', **NULLABLE)
+    course = models.ForeignKey('university.Course', verbose_name='Курс',
+                               on_delete=models.CASCADE, related_name='sub_course', **NULLABLE)

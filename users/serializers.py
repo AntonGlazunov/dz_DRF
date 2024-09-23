@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from users.models import User, Pay
+from users.models import User, Pay, Subscription
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ['course']
 
 
 class PayUserSerializer(serializers.ModelSerializer):
@@ -11,10 +17,11 @@ class PayUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     pay_user = PayUserSerializer(many=True, read_only=True)
+    sub_user = SubscriptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'avatar', 'phone', 'country', 'pk', 'pay_user']
+        fields = ['email', 'avatar', 'phone', 'country', 'pk', 'pay_user', 'sub_user']
 
 
 class UserAllSerializer(serializers.ModelSerializer):
@@ -28,11 +35,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
-
-    # def create(self, validated_data):
-    #     user = User.objects.create(email=validated_data.get('email'), is_active=True)
-    #     user.set_password(validated_data['password'])
-    #     return user
 
 
 class PaySerializer(serializers.ModelSerializer):

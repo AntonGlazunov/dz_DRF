@@ -18,6 +18,10 @@ coverage = "^7.6.1"
 coreapi = "^2.3.3"
 drf-yasg = "^1.21.7"
 setuptools = "^75.1.0"
+django-cors-headers = "^4.4.0"
+drf-spectacular = "^0.27.2"
+requests = "^2.32.3"
+stripe = "^10.12.0"
 
 
 [build-system]

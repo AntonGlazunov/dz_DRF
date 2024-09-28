@@ -23,7 +23,7 @@ class Pay(models.Model):
         ('cash', 'Наличные'),
         ('card', 'Карта'),
     }
-    user = models.ForeignKey('User', verbose_name='Пользователь', on_delete=models.CASCADE, related_name='pay_user',
+    owner = models.ForeignKey('User', verbose_name='Пользователь', on_delete=models.CASCADE, related_name='pay_user',
                              **NULLABLE)
     date_pay = models.DateField(auto_now=False, verbose_name='Дата оплаты', **NULLABLE)
     paid_course = models.ForeignKey('university.Course', verbose_name='Курс',
@@ -31,6 +31,8 @@ class Pay(models.Model):
     paid_lesson = models.ForeignKey('university.Lesson', verbose_name='Урок',
                                     on_delete=models.CASCADE, related_name='paid_lesson_user', **NULLABLE)
     sum_paid = models.IntegerField(verbose_name='Сумма оплаты', **NULLABLE)
+    status_paid = models.BooleanField(verbose_name='Статус оплаты', default=False)
+    url_paid = models.URLField(max_length=1000, verbose_name='Ссылка на оплату', **NULLABLE)
     payment_method = models.CharField(max_length=4, verbose_name='Способ оплаты', choices=PAYMENT_METHOD_CHOICES,
                                       **NULLABLE)
 

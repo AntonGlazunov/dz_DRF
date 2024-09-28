@@ -1,20 +1,26 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from university.models import Course
 from users.models import User, Pay, Subscription
 from users.permissions import IsOwner
 from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer, UserAllSerializer, \
-    SubscriptionSerializer
+    SubscriptionSerializer, PayCreateSerializer
+from users.services import create_session_stripe
 
 
 class UserCreateAPIView(generics.CreateAPIView):
     serializer_class = UserCreateSerializer
     queryset = User.objects.all()
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         user = serializer.save(is_active=True)
@@ -33,6 +39,13 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        parameters=[
+            UserAllSerializer,  # serializer fields are converted to parameters
+        ],
+        request=UserAllSerializer,
+        responses={200: UserAllSerializer},
+    )
     def get_serializer(self, *args, **kwargs):
         if self.request.user.pk == self.get_object().pk:
             return super().get_serializer(*args, **kwargs)
@@ -53,12 +66,27 @@ class UserDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [IsOwner]
 
 
+class PayCreateAPIView(generics.CreateAPIView):
+    serializer_class = PayCreateSerializer
+    queryset = Pay.objects.all()
+
+    def perform_create(self, serializer):
+        paid = serializer.save(owner=self.request.user)
+        if paid.paid_course is not None:
+            paid.sum_paid = paid.paid_course.price
+        else:
+            paid.sum_paid = paid.paid_lesson.price
+        if paid.payment_method == "card":
+            response = create_session_stripe(paid.paid_course.stripe_price_id)
+            paid.url_paid = response['url']
+        paid.save()
+
+
 class PayListAPIView(generics.ListAPIView):
     serializer_class = PaySerializer
     queryset = Pay.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
-    ordering_fields = ['date_pay']
     permission_classes = [IsOwner]
 
 

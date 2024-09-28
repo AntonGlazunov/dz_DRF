@@ -9,6 +9,9 @@ class Course(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название')
     preview = models.ImageField(upload_to='university/', verbose_name='Превью', **NULLABLE)
     description = models.TextField(verbose_name='описание')
+    price = models.IntegerField(verbose_name='Цена', default='10000')
+    stripe_id = models.CharField(max_length=100, verbose_name='ID продукта в STRIPE', **NULLABLE)
+    stripe_price_id = models.CharField(max_length=100, verbose_name='Кэшированная стоимость', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
@@ -25,6 +28,9 @@ class Lesson(models.Model):
     preview = models.ImageField(upload_to='university/', verbose_name='Превью', **NULLABLE)
     video_URL = models.URLField(max_length=100, verbose_name='Ссылка на видео', **NULLABLE)
     course = models.ForeignKey('Course', verbose_name='Курс', on_delete=models.CASCADE, **NULLABLE)
+    price = models.IntegerField(verbose_name='Цена', default='1000')
+    stripe_id = models.CharField(max_length=100, verbose_name='ID продукта в STRIPE', **NULLABLE)
+    stripe_price_id = models.CharField(max_length=100, verbose_name='Кэшированная стоимость', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):

@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
-    'drf_yasg',
+    # 'drf_yasg',
+    'corsheaders',
+    'drf_spectacular',
 
     'users',
     'university',
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -155,7 +158,7 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-LOGIN_URL = 'users:login'
+# LOGIN_URL = 'users:login'
 
 CACHE_ENABLE = os.getenv('CACHE_ENABLE') == 'True'
 
@@ -174,9 +177,42 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+# SWAGGER_SETTINGS = {
+#     'VALIDATOR_URL': 'http://localhost:8189',
+#     'SECURITY_DEFINITIONS': {
+#           'Basic': {
+#                 'type': 'basic'
+#           },
+#           'Bearer': {
+#                 'type': 'apiKey',
+#                 'name': 'Authorization',
+#                 'in': 'header'
+#           }
+#        }
+# }
+
+# CORS_ALLOWED_ORIGINS = [
+#     '<http://localhost:8000>',  # Замените на адрес вашего фронтенд-сервера
+# ]
+#
+# CORS_ALLOW_ALL_ORIGINS = False
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+
+STRIPE_API_URL = os.getenv('STRIPE_API_URL')

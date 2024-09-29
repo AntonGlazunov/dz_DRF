@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from university.models import Course, Lesson
 from university.paginators import UniversityPaginator
 from university.serializers import CourseSerializer, LessonSerializer
+from university.tasks import mailing
 from users.permissions import IsOwner, IsModer, IsAuthenticatedAndNoModer
 
 
@@ -14,6 +15,12 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        instance = self.get_object()
+        mailing.delay(instance)
+
 
     def get_queryset(self):
         if self.request.user.groups.filter(name='Moder').exists():

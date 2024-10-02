@@ -5,7 +5,7 @@ from users.models import User, Subscription
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'email',)
+    list_display = ('pk', 'email', 'last_login')
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):

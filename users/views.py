@@ -1,20 +1,36 @@
+from datetime import datetime, date
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics
-from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
+from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from university.models import Course
 from users.models import User, Pay, Subscription
 from users.permissions import IsOwner
 from users.serializers import UserSerializer, PaySerializer, UserCreateSerializer, UserAllSerializer, \
-    SubscriptionSerializer, PayCreateSerializer
+    SubscriptionSerializer, PayCreateSerializer, MyTokenObtainPairSerializer
 from users.services import create_session_stripe
+
+
+class LoginAPIView(TokenObtainPairView):
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            user = User.objects.get(email=request.data['email'])
+            user.last_login = date.today()
+            user.save()
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -23,7 +39,7 @@ class UserCreateAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        user = serializer.save(is_active=True)
+        user = serializer.save(is_active=True, last_login=date.today())
         user.set_password(user.password)
         user.save()
 

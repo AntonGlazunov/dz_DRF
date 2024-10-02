@@ -18,8 +18,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save()
-        instance = self.get_object()
-        mailing.delay(instance)
+        course_pk = self.get_object().pk
+        mailing.delay(course_pk)
 
 
     def get_queryset(self):

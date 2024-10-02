@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.apps import UsersConfig
 from users.views import UserCreateAPIView, UserListAPIView, UserRetrieveAPIView, UserUpdateAPIView, UserDestroyAPIView, \
-    PayListAPIView, PayRetrieveAPIView, SubCreateOrDeliteAPIView, PayCreateAPIView
+    PayListAPIView, PayRetrieveAPIView, SubCreateOrDeliteAPIView, PayCreateAPIView, LoginAPIView
 
 app_name = UsersConfig.name
 
@@ -16,7 +16,7 @@ urlpatterns = [
     path('pays/', PayListAPIView.as_view(), name='pays_list'),
     path('pays/<int:pk>/', PayRetrieveAPIView.as_view(), name='pay_detail'),
     path('pays/create/', PayCreateAPIView.as_view(), name='pays_create'),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/', LoginAPIView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('sub/', SubCreateOrDeliteAPIView.as_view(), name='add/delite-sub'),
 ]

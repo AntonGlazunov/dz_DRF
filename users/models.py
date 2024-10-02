@@ -10,6 +10,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
     country = models.CharField(max_length=100, verbose_name='страна', **NULLABLE)
+    last_login = models.DateField(auto_now=False, verbose_name='Дата последнего входа', **NULLABLE)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -49,3 +50,6 @@ class Subscription(models.Model):
                              on_delete=models.CASCADE, related_name='sub_user', **NULLABLE)
     course = models.ForeignKey('university.Course', verbose_name='Курс',
                                on_delete=models.CASCADE, related_name='sub_course', **NULLABLE)
+
+    def __str__(self):
+        return f'{self.user} {self.course}'

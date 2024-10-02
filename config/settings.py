@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'drf_yasg',
     'corsheaders',
     'drf_spectacular',
+    'django_celery_beat',
 
     'users',
     'university',
@@ -221,5 +222,12 @@ SPECTACULAR_SETTINGS = {
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 
 STRIPE_API_URL = os.getenv('STRIPE_API_URL')
+
+CELERY_BEAT_SCHEDULE = {
+    'check_last_login': {
+        'task': 'university.tasks.check_last_login',  # Путь к задаче
+        'schedule': timedelta(minutes=2),  # Расписание выполнения задачи
+    },
+}
 
 

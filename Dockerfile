@@ -6,10 +6,9 @@ COPY ./pyproject.toml .
 
 COPY ./poetry.lock .
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-RUN ~/.local/share/pypoetry/venv/bin/poetry install
-
-RUN ~/.local/share/pypoetry/venv/bin/poetry add django
+RUN pip install --upgrade pip
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-root
 
 COPY . .

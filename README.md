@@ -11,7 +11,7 @@ docker-compose up
 
 команда для остановки работы программы:
 
-docker-compose down
+docker-compose down 
 
 
 
